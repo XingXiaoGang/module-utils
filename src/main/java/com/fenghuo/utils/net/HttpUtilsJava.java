@@ -1,4 +1,6 @@
-package com.fenghuo.utils;
+package com.fenghuo.utils.net;
+
+import com.fenghuo.utils.FileUtils;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;

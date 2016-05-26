@@ -1,4 +1,4 @@
-package com.fenghuo.utils;
+package com.fenghuo.utils.net;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

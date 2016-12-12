@@ -2,7 +2,9 @@ package com.fenghuo.utils.hash;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 import java.security.SecureRandom;
+import java.security.Security;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -14,20 +16,36 @@ import javax.crypto.SecretKey;
 /**
  * Created by gang on 16-6-4.
  */
-public class CipherUtil {
+public class CipherUtil_O {
 
     private static KeyGenerator keyGenerator;
     private static SecureRandom secureRandom;
     private static SecretKey secretKey;
     private static Cipher cipher;
+    public static final String KEY = "EAAJI3J23U1";
 
     static {
         try {
-            keyGenerator = KeyGenerator.getInstance("AES");
-            cipher = Cipher.getInstance("AES");
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            if (isSupportAndroid()) {
+                Provider provider = Security.getProvider("BC");
+                keyGenerator = KeyGenerator.getInstance("AES", provider);
+                cipher = Cipher.getInstance("AES", provider);
+            } else {
+                Provider provider = Security.getProvider("SunJCE");
+                keyGenerator = KeyGenerator.getInstance("AES", provider);
+                cipher = Cipher.getInstance("AES", provider);
+            }
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public static boolean isSupportAndroid() {
+        return Security.getProvider("BC") != null;
     }
 
     private static boolean prepare(byte[] seed) {
@@ -49,14 +67,12 @@ public class CipherUtil {
      * @param seed      key
      * @param cleartext 明文
      */
-    public static String encrypt(String seed, String cleartext) {
+    public static byte[] encrypt(byte[] cleartext, String seed) {
         byte[] rawKey = seed.getBytes();
         if (prepare(rawKey)) {
             try {
                 cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-                byte[] enc = cleartext.getBytes();
-                byte[] result = cipher.doFinal(enc);
-                return parseByte2HexStr(result);
+                return cipher.doFinal(cleartext);
             } catch (InvalidKeyException e) {
                 e.printStackTrace();
             } catch (BadPaddingException e) {
@@ -72,14 +88,12 @@ public class CipherUtil {
      * @param seed      key
      * @param encrypted 密文
      */
-    public static String decrypt(String seed, String encrypted) {
+    public static byte[] decrypt(byte[] encrypted, String seed) {
         byte[] rawKey = seed.getBytes();
         if (prepare(rawKey)) {
             try {
                 cipher.init(Cipher.DECRYPT_MODE, secretKey);
-                byte[] enc = parseHexStr2Byte(encrypted);
-                byte[] result = cipher.doFinal(enc);
-                return new String(result);
+                return cipher.doFinal(encrypted);
             } catch (InvalidKeyException e) {
                 e.printStackTrace();
             } catch (BadPaddingException e) {

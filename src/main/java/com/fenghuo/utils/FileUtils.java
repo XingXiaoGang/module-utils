@@ -150,7 +150,7 @@ public class FileUtils {
                 delete(destFile);
             }
             FileOutputStream out = new FileOutputStream(destFile);
-            byte[] buffer = CommonPools.obtainByteBuffer();
+            byte[] buffer = new byte[1024];
             try {
                 int bytesRead;
                 if (listener != null) {
@@ -832,8 +832,8 @@ public class FileUtils {
     public static String readFileToString(InputStream in) throws IOException {
 
         Reader reader = new InputStreamReader(in);
-        char[] cb = CommonPools.obtainCharBuffer();
-        StringBuilder result = CommonPools.obtainStringBuilder();
+        char[] cb = new char[1024];
+        StringBuilder result = new StringBuilder();
         int len;
         try {
             while ((len = reader.read(cb)) != -1) {
@@ -841,8 +841,6 @@ public class FileUtils {
             }
             return result.toString();
         } finally {
-            CommonPools.recycle(result);
-            CommonPools.recycle(cb);
         }
     }
 

@@ -44,6 +44,7 @@ public class FileUtils {
     public static final int S_IWOTH = 00002;
     public static final int S_IXOTH = 00001;
 
+    private static final String TAG = "test.FileUtils";
     public static final String SCHEME_ASSET = "asset";
     public static final String SCHEME_FILE = "file";
     public static final String SCHEME_ANDROID_RESOURCE = "android.resource";
@@ -181,6 +182,7 @@ public class FileUtils {
             }
             return true;
         } catch (IOException e) {
+            Log.e(TAG, "writeToFile: error ", e);
             return false;
         }
     }
